@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="e5dfff3b447542c584b1507973d06263" Name="Diagram1" ZoomLevel="99" >
+        <EntityTypeShape EntityType="Model1.Weather" Width="1.5" PointX="0.5" PointY="0.625" />
+        <EntityTypeShape EntityType="Model1.City" Width="1.5" PointX="2.75" PointY="0.875" />
+        <AssociationConnector Association="Model1.CityWeather" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
