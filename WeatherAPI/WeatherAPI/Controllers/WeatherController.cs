@@ -14,31 +14,36 @@ namespace WeatherApi.Controllers
         private Model1Container context = new Model1Container();
 
 
-        [HttpGet]
-        [Route("api/weather")]
-        public IEnumerable<Weather> GetAllWeathers()
-        {
-            if (!GlobalController.flag)
-            {
-                foreach (var item in context.Weather)
-                {
-                    context.Weather.Remove(item);
-                }
+        //[HttpGet]
+        //[Route("api/weather")]
+        //public IEnumerable<Weather> GetAllWeathers()
+        //{
+        //    if (!GlobalController.flag)
+        //    {
+        //        foreach (var item in context.Weather)
+        //        {
+        //            context.Weather.Remove(item);
+        //        }
 
-                context.SaveChanges();
+        //        context.SaveChanges();
 
-                CreateWeather("Crans-Montana", DateTime.Now);
-                CreateWeather("Sierre", DateTime.Now);
-                CreateWeather("Sion", DateTime.Now);
-                CreateWeather("Lausanne", DateTime.Now);
-            }
+        //        for (int i = 0; i < 3; i++)
+        //        {
+        //            CreateWeather("Crans-Montana", DateTime.Now.AddDays(i));
+        //            CreateWeather("Sierre", DateTime.Now.AddDays(i));
+        //            CreateWeather("Sion", DateTime.Now.AddDays(i));
+        //            CreateWeather("Lausanne", DateTime.Now.AddDays(i));
+        //        }
+        //    }
 
-            GlobalController.flag = true;
+        //    GlobalController.flag = true;
 
-            var q = from w in context.Weather
-                    select w;
-            return q.ToList();
-        }
+        //    var q = from w in context.Weather
+        //            select w;
+        //    return q.ToList();
+        //}
+
+
         [HttpGet]
         [Route("api/weather/{cityName}")]
         public IEnumerable<Weather> GetWeatherByCity(string cityName)
@@ -52,15 +57,20 @@ namespace WeatherApi.Controllers
 
                 context.SaveChanges();
 
-                CreateWeather("Crans-Montana", DateTime.Now);
-                CreateWeather("Sierre", DateTime.Now);
-                CreateWeather("Sion", DateTime.Now);
-                CreateWeather("Lausanne", DateTime.Now);
+                for (int i = 0; i < 3; i++)
+                {
+                    CreateWeather("Crans-Montana", DateTime.Now.AddDays(i));
+                    CreateWeather("Sierre", DateTime.Now.AddDays(i));
+                    CreateWeather("Sion", DateTime.Now.AddDays(i));
+                    CreateWeather("Lausanne", DateTime.Now.AddDays(i));
+
+                }
             }
 
             GlobalController.flag = true;
 
             var q = from w in context.Weather.Include("City").Where(s => s.City.name.ToLower().Contains(cityName))
+                    .OrderBy(s => s.date)
                     select w;
             return q.ToList();
         }
@@ -69,6 +79,21 @@ namespace WeatherApi.Controllers
         [Route("api/weather/")]
         public IHttpActionResult PostWeather([FromBody]Weather w)
         {
+
+            //first check if a weather already exists at the date we are creating
+            foreach (var item in context.Weather)
+            {
+                if (item.City.name.Equals(w.City.name))
+                {
+                    if (item.date.Date.Equals(w.date.Date))
+                    {
+                        context.Weather.Remove(item);
+                    }
+                }
+            }
+            context.SaveChanges();
+
+            //now save the new weather in the DB
             context.Weather.Add(w);
             context.SaveChanges();
             return Ok(w);
