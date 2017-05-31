@@ -13,37 +13,6 @@ namespace WeatherApi.Controllers
 
         private Model1Container context = new Model1Container();
 
-
-        //[HttpGet]
-        //[Route("api/weather")]
-        //public IEnumerable<Weather> GetAllWeathers()
-        //{
-        //    if (!GlobalController.flag)
-        //    {
-        //        foreach (var item in context.Weather)
-        //        {
-        //            context.Weather.Remove(item);
-        //        }
-
-        //        context.SaveChanges();
-
-        //        for (int i = 0; i < 3; i++)
-        //        {
-        //            CreateWeather("Crans-Montana", DateTime.Now.AddDays(i));
-        //            CreateWeather("Sierre", DateTime.Now.AddDays(i));
-        //            CreateWeather("Sion", DateTime.Now.AddDays(i));
-        //            CreateWeather("Lausanne", DateTime.Now.AddDays(i));
-        //        }
-        //    }
-
-        //    GlobalController.flag = true;
-
-        //    var q = from w in context.Weather
-        //            select w;
-        //    return q.ToList();
-        //}
-
-
         [HttpGet]
         [Route("api/weather/{cityName}")]
         public IEnumerable<Weather> GetWeatherByCity(string cityName)
@@ -79,7 +48,7 @@ namespace WeatherApi.Controllers
         [Route("api/weather/")]
         public IHttpActionResult PostWeather([FromBody]Weather w)
         {
-
+            context.City.Attach(w.City);
             //first check if a weather already exists at the date we are creating
             foreach (var item in context.Weather)
             {
@@ -94,6 +63,7 @@ namespace WeatherApi.Controllers
             context.SaveChanges();
 
             //now save the new weather in the DB
+
             context.Weather.Add(w);
             context.SaveChanges();
             return Ok(w);
@@ -104,6 +74,7 @@ namespace WeatherApi.Controllers
         public IHttpActionResult PutWeather([FromBody]Weather w)
         {
             Weather weather = context.Weather.Where(we => we.Id == w.Id).First();
+            context.City.Attach(w.City);
             weather.degreeMorning = w.degreeMorning;
             weather.degreeAfternoon = w.degreeAfternoon;
             weather.precipitation = w.precipitation;
