@@ -11,6 +11,18 @@ namespace WeatherAPI.Controllers
     {
 
         private Model1Container context = new Model1Container();
+
+        [HttpGet]
+        [Route("api/city")]
+        public IHttpActionResult GetAllCities()
+        {
+            var cities = from c in context.City
+                         .OrderBy(ci => ci.name)
+                         select c;
+
+            return Ok(cities.ToList());
+        }
+
         [HttpGet]
         [Route("api/city/{cityName}")]
         public IHttpActionResult GetCityByName(string cityName)
